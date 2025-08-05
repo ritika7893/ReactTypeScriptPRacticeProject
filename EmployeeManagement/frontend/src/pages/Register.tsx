@@ -1,10 +1,29 @@
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, message } from "antd";
 import AuthLayout from "../components/AuthLayout";
-import { Link } from "react-router";
+import { Link } from "react-router"; // corrected from "react-router"
+import axios from "axios";
 
 export default function Register() {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
+  const onFinish = async (values: any) => {
+    try {
+      const response = await axios.post("https://d9c7f3fee6e9.ngrok-free.app/auth/register-user", {
+        fullname: values.fullname,
+        email: values.email,
+        number: values.number,
+        password: values.password,
+      });
+
+      message.success("Registration successful!");
+      console.log("Server Response:", response.data);
+
+      // Optionally redirect or reset form here
+
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      message.error(
+        error.response?.data?.message || "Registration failed. Please try again."
+      );
+    }
   };
 
   return (
@@ -29,6 +48,7 @@ export default function Register() {
         >
           <Input size="small" />
         </Form.Item>
+
         <Form.Item
           label="Phone Number"
           name="number"
@@ -73,8 +93,8 @@ export default function Register() {
         <div className="text-center text-sm mt-4">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
-  Sign In
-</Link>
+            Sign In
+          </Link>
         </div>
       </Form>
     </AuthLayout>
